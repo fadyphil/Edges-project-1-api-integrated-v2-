@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mini_project_1/UI/widgets/info_row_builder.dart';
 import 'package:mini_project_1/UI/widgets/tag_row_builder.dart';
-import 'package:mini_project_1/blocs/explore/explore_cubit.dart';
 import 'package:mini_project_1/data/models/models.dart';
 import 'package:mini_project_1/blocs/favourited/favourited_cubit.dart';
 import 'package:mini_project_1/routes/app_router.dart';
@@ -54,7 +53,25 @@ class RecipeCard extends StatelessWidget {
                     end: Alignment.centerLeft,
                     )
                 ),
-                child: Image.asset(recipe.imagePath, width: 100, height: 100, fit: BoxFit.cover),
+                child: Image.network(
+                  recipe.imagePath, 
+                  width: 100, 
+                  height: 100, 
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Icon(
+                      Icons.error,
+                      size: 40,
+                      color: Colors.red,
+                      );
+                  },
+                  ),
                  
                 ),
             ),
@@ -156,16 +173,10 @@ class FavouriteButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isFavorited = context.watch<FavouritedCubit>().state.favouritedRecipes.contains(recipe);
-    final filterRecipe=  context.watch<ExploreCubit>().state.filteredRecipes.firstWhere((element) => element.id==recipe.id);
+
     return InkWell(
             onTap: () {
-              final favRec= recipe;
-              print('the hashcode from all recipes : ${filterRecipe.hashCode}');
-              print('the hashcode from the toggle bitton : ${favRec.hashCode}');
               context.read<FavouritedCubit>().toggleFavourite(recipe);
-              final allfavedrec=context.read<FavouritedCubit>().state.favouritedRecipes;
-              print(favRec.runtimeType==filterRecipe.runtimeType?'equal':'not equal');
-              print(allfavedrec);
                 },
             child: Container(
                     padding: const EdgeInsets.all(4),

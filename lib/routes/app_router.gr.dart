@@ -96,7 +96,7 @@ class RecipeDetailsRoute extends PageRouteInfo<RecipeDetailsRouteArgs> {
   RecipeDetailsRoute({
     Key? key,
     required Recipe recipe,
-    required String heroprefix,
+    String heroprefix = 'explore',
     List<PageRouteInfo>? children,
   }) : super(
          RecipeDetailsRoute.name,
@@ -127,7 +127,7 @@ class RecipeDetailsRouteArgs {
   const RecipeDetailsRouteArgs({
     this.key,
     required this.recipe,
-    required this.heroprefix,
+    this.heroprefix = 'explore',
   });
 
   final Key? key;
@@ -216,6 +216,22 @@ class RecipeDoneRouteArgs {
 
   @override
   int get hashCode => key.hashCode ^ recipe.hashCode ^ timeTaken.hashCode;
+}
+
+/// generated route for
+/// [SplashScreen]
+class SplashRoute extends PageRouteInfo<void> {
+  const SplashRoute({List<PageRouteInfo>? children})
+    : super(SplashRoute.name, initialChildren: children);
+
+  static const String name = 'SplashRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const SplashScreen();
+    },
+  );
 }
 
 /// generated route for

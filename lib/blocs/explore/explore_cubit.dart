@@ -2,7 +2,7 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mini_project_1/data/models/enums.dart';
-import 'package:mini_project_1/data/repos/recipe_repo.dart';
+import 'package:mini_project_1/data/repos/api_recipe_repo.dart';
 import 'explore_state.dart';
 
 class ExploreCubit extends Cubit<ExploreState> {
@@ -12,21 +12,28 @@ class ExploreCubit extends Cubit<ExploreState> {
       : _recipeRepository = recipeRepository,
         super(const ExploreState.initial());
 
-  void loadRecipes() {
-    final allRecipes = _recipeRepository.fetchAllRecipes();
+  Future<void> loadRecipes() async {
+    emit(const ExploreState.loading());
 
-    if (allRecipes.isEmpty) {
+  
+    try {
+      final allRecipes = await _recipeRepository.fetchAllRecipes();
+
+      if (allRecipes.isEmpty) {
       // For the empty case, provide an empty list and empty set of tags
-      emit(const ExploreState.loaded(allRecipes: [], allTags: {}));
-      return;
+        emit(const ExploreState.loaded(allRecipes: [], allTags: {}));
+        return;
     }
 
     // --- FIX #1: Calculate allTags from the recipes ---
     // Use expand() to flatten the list of lists of tags, then toSet() to get unique values.
     final allTags = allRecipes.expand((recipe) => recipe.tags).toSet();
+        emit(ExploreState.loaded(allRecipes: allRecipes, allTags: allTags));
+    
+    }  catch (e){
+      emit(ExploreState.error('Failed to load recipes'));
+    }
 
-    // --- FIX #2: Provide the required allTags parameter ---
-    emit(ExploreState.loaded(allRecipes: allRecipes, allTags: allTags));
   }
 
   void toggleViewType() {

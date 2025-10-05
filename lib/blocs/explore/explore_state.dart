@@ -12,6 +12,7 @@ abstract class ExploreState with _$ExploreState {
   /// The state before the local data has been loaded into the cubit.
   /// The UI can use this to know it shouldn't render the main content yet.
   const factory ExploreState.initial() = _Initial;
+  const factory ExploreState.loading()= _Loading;
 
   /// The primary state when all recipe data has been successfully loaded.
   /// This state contains all the information the UI needs to display the Explore screen.
@@ -30,6 +31,10 @@ abstract class ExploreState with _$ExploreState {
     
   }) = _Loaded;
 
+  const factory ExploreState.error(String message)= _Error;
+
+  
+
   // --- Inferred State Getter ---
   
   /// Calculates and returns the "Today's Challenge" recipe.
@@ -40,7 +45,7 @@ abstract class ExploreState with _$ExploreState {
     return when(
       // --- FIX #1: The initial state has no recipes, so return null. ---
       initial: () => null,
-      
+      loading: () => null,
       loaded: (allRecipes, _, __, ___, ____) {
         // Guard clause for an empty recipe list to prevent crashes.
         if (allRecipes.isEmpty) {
@@ -52,6 +57,7 @@ abstract class ExploreState with _$ExploreState {
         final challengeIndex = dayOfYear % allRecipes.length;
         return allRecipes[challengeIndex];
       },
+      error: (message) => null,
     );
   }
 
@@ -59,6 +65,7 @@ abstract class ExploreState with _$ExploreState {
    List<Recipe> get filteredRecipes {
     return when(
       initial: () => [],
+      loading: () => [],
       loaded: (allRecipes, searchQuery, _, selectedTags,_) {
         // Start with a copy of all recipes
         List<Recipe> filtered = List.from(allRecipes);
@@ -80,6 +87,7 @@ abstract class ExploreState with _$ExploreState {
 
         return filtered;
       },
+      error: (message) => [],
     );
   }
 

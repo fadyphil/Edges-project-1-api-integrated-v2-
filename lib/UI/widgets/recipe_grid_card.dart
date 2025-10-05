@@ -53,7 +53,7 @@ class RecipeGridCard extends StatelessWidget {
                     stops: const [0.2,0.45,0.6,0.8,1]
                   ),
                 ),
-                child: Image.asset(
+                child: Image.network(
                   recipe.imagePath,
                   width: double.infinity,
                   height:150,

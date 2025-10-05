@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,6 +11,7 @@ import 'package:mini_project_1/UI/widgets/today_challenge_card.dart';
 import 'package:mini_project_1/blocs/explore/explore_cubit.dart';
 import 'package:mini_project_1/blocs/explore/explore_state.dart';
 import 'package:mini_project_1/blocs/user/user_cubit.dart';
+import 'package:mini_project_1/cache/cache_service.dart';
 import 'package:mini_project_1/data/models/models.dart';
 
 
@@ -21,11 +23,14 @@ class ExploreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+       
       body: BlocBuilder<ExploreCubit, ExploreState>(
         buildWhen: (previous, current) => previous.runtimeType != current.runtimeType,
         builder: (context, state) {
           return state.when(
             initial: () => const Center(child: CircularProgressIndicator()),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (message) => Center(child: Text(message)),
             loaded: (_, __, ___, ____, _____) {
               final username = context.watch<UserCubit>().state.user.name;
               
@@ -134,67 +139,67 @@ class ListSliverRecipes extends StatelessWidget {
   }
 }
 
-class GreetingSentence extends StatelessWidget {
-  const GreetingSentence({
-    super.key,
-    required this.greeting,
-    required this.username,
-  });
+// class GreetingSentence extends StatelessWidget {
+//   const GreetingSentence({
+//     super.key,
+//     required this.greeting,
+//     required this.username,
+//   });
 
-  final String greeting;
-  final String username;
+//   final String greeting;
+//   final String username;
 
-  @override
-  Widget build(BuildContext context) {
-  // Get the styles from the theme once to make the code cleaner
-  final headlineStyle = Theme.of(context).textTheme.headlineSmall;
-  final primaryColor = Theme.of(context).colorScheme.primary;
+//   @override
+//   Widget build(BuildContext context) {
+//   // Get the styles from the theme once to make the code cleaner
+//   final headlineStyle = Theme.of(context).textTheme.headlineSmall;
+//   final primaryColor = Theme.of(context).colorScheme.primary;
 
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center, // Better vertical alignment
-        children: [
-          // --- THE FIX: Replace the inner Row with RichText ---
-          // RichText is perfect for a single line of text with multiple styles.
-          // It handles wrapping and overflow correctly as one element.
-          Expanded(
-            child: RichText(
-              text: TextSpan(
-                // Default style for the entire sentence
-                style: headlineStyle?.copyWith(fontWeight: FontWeight.normal),
-                children: <TextSpan>[
-                  TextSpan(text: 'Good $greeting, '),
-                  TextSpan(
-                    text: '$username!',
-                    // Specific style for the username
-                    style: headlineStyle?.copyWith(color: primaryColor),
-                  ),
-                ],
-              ),
-              maxLines: 2, // Allow it to wrap to a second line if needed
-              overflow: TextOverflow.ellipsis, // Add ellipsis if it's still too long
-            ),
-          ),
-          // --- END OF FIX ---
+//   return Column(
+//     crossAxisAlignment: CrossAxisAlignment.start,
+//     children: [
+//       Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//         crossAxisAlignment: CrossAxisAlignment.center, // Better vertical alignment
+//         children: [
+//           // --- THE FIX: Replace the inner Row with RichText ---
+//           // RichText is perfect for a single line of text with multiple styles.
+//           // It handles wrapping and overflow correctly as one element.
+//           Expanded(
+//             child: RichText(
+//               text: TextSpan(
+//                 // Default style for the entire sentence
+//                 style: headlineStyle?.copyWith(fontWeight: FontWeight.normal),
+//                 children: <TextSpan>[
+//                   TextSpan(text: 'Good $greeting, '),
+//                   TextSpan(
+//                     text: '$username!',
+//                     // Specific style for the username
+//                     style: headlineStyle?.copyWith(color: primaryColor),
+//                   ),
+//                 ],
+//               ),
+//               maxLines: 2, // Allow it to wrap to a second line if needed
+//               overflow: TextOverflow.ellipsis, // Add ellipsis if it's still too long
+//             ),
+//           ),
+//           // --- END OF FIX ---
 
-        const SizedBox(width: 8), // Add some spacing for safety
-        const LevelDropDown()
-        ],
-      ),
-      Text(
-        'Ready to cook something amazing?',
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.normal,
-              color: const Color(0xFF888481),
-            ),
-      ),
-    ],
-  );
-}
-}
+//         const SizedBox(width: 8), // Add some spacing for safety
+//         const LevelDropDown()
+//         ],
+//       ),
+//       Text(
+//         'Ready to cook something amazing?',
+//         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+//               fontWeight: FontWeight.normal,
+//               color: const Color(0xFF888481),
+//             ),
+//       ),
+//     ],
+//   );
+// }
+// }
 
 class LevelDropDown extends StatelessWidget {
   const LevelDropDown({
@@ -222,6 +227,7 @@ class LevelDropDown extends StatelessWidget {
           onChanged: (UserCookingLevel? newLevel) {
             if (newLevel != null) {
               context.read<UserCubit>().changelevel(newLevel);
+              CacheService().setUserLevel(newLevel);
             }
           },
           selectedItemBuilder: (BuildContext context) {
@@ -315,3 +321,157 @@ class GridSliverRecipes extends StatelessWidget {
   }
 }
 
+// In ExploreScreen.dart
+
+class GreetingSentence extends StatefulWidget { // <-- CHANGED
+  const GreetingSentence({
+    super.key,
+    required this.greeting,
+    required this.username,
+  });
+
+  final String greeting;
+  final String username;
+
+  @override
+  State<GreetingSentence> createState() => _GreetingSentenceState(); // <-- ADDED
+}
+
+class _GreetingSentenceState extends State<GreetingSentence> { // <-- ADDED
+  late TapGestureRecognizer _tapRecognizer; // To make the name tappable
+
+  @override
+  void initState() {
+    super.initState();
+    _tapRecognizer = TapGestureRecognizer()
+      ..onTap = () {
+        // When the name is tapped, we call the function to show our dialog
+        _showEditNameDialog(context, widget.username);
+      };
+  }
+
+  @override
+  void dispose() {
+    // It's crucial to dispose of the recognizer to prevent memory leaks
+    _tapRecognizer.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final headlineStyle = Theme.of(context).textTheme.headlineSmall;
+    final primaryColor = Theme.of(context).colorScheme.primary;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: RichText(
+                text: TextSpan(
+                  style: headlineStyle?.copyWith(fontWeight: FontWeight.normal),
+                  children: <TextSpan>[
+                    TextSpan(text: 'Good ${widget.greeting}, '), // <-- Use widget.greeting
+                    TextSpan(
+                      text: '${widget.username}!', // <-- Use widget.username
+                      style: headlineStyle?.copyWith(
+                        color: primaryColor,
+                        decoration: TextDecoration.underline, // Add underline to show it's clickable
+                      ),
+                      recognizer: _tapRecognizer, // <-- THIS MAKES THE TEXT TAPPABLE
+                    ),
+                  ],
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const SizedBox(width: 8),
+            const LevelDropDown()
+          ],
+        ),
+        Text(
+          'Ready to cook something amazing?',
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.normal,
+                color: const Color(0xFF888481),
+              ),
+        ),
+      ],
+    );
+  }
+}
+
+// In ExploreScreen.dart, but outside any class
+
+// A private helper widget to manage the TextField's state inside the dialog
+class _EditNameDialogContent extends StatefulWidget {
+  final String currentName;
+  const _EditNameDialogContent({required this.currentName});
+
+  @override
+  State<_EditNameDialogContent> createState() => _EditNameDialogContentState();
+}
+
+class _EditNameDialogContentState extends State<_EditNameDialogContent> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.currentName);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Change Your Name'),
+      content: TextField(
+        controller: _controller,
+        autofocus: true,
+        decoration: const InputDecoration(hintText: 'Enter your new name'),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            // Just close the dialog
+            Navigator.of(context).pop();
+          },
+          child: const Text('Cancel'),
+        ),
+        FilledButton( // Use a more prominent button for the confirm action
+          onPressed: () {
+            // If the name isn't empty, update it
+            if (_controller.text.isNotEmpty) {
+              context.read<UserCubit>().changename(_controller.text);
+              CacheService().setUserName(_controller.text);
+            }
+            // Close the dialog
+            Navigator.of(context).pop();
+          },
+          child: const Text('Confirm'),
+        ),
+      ],
+    );
+  }
+}
+
+// This is the function we call to show the dialog
+void _showEditNameDialog(BuildContext context, String currentName) {
+  showDialog(
+    context: context,
+    builder: (BuildContext dialogContext) {
+      // We use our new stateful widget here to correctly manage the controller
+      return _EditNameDialogContent(currentName: currentName);
+    },
+  );
+}

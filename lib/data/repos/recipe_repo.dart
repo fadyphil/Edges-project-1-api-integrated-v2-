@@ -5,16 +5,16 @@ import 'package:mini_project_1/data/models/models.dart';
 // 1. The Interface (The Contract) - Now Synchronous
 // -------------------
 /// Defines the contract for fetching recipe data.
-abstract class IRecipeRepository {
-  /// Fetches the complete list of all available recipes synchronously.
-  List<Recipe> fetchAllRecipes();
-}
+// abstract class IRecipeRepository {
+//   /// Fetches the complete list of all available recipes synchronously.
+//   List<Recipe> fetchAllRecipes();
+// }
 
 // -------------------
 // 2. The Concrete Implementation (The Dummy Data Source) - Now Synchronous
 // -------------------
 /// This is a dummy implementation that returns a hardcoded list of recipes instantly.
-class RecipeRepository implements IRecipeRepository {
+class RecipeRepository {
   @override
   List<Recipe> fetchAllRecipes() {
     // No Future, no async, no delay. It returns the data immediately.

@@ -43,7 +43,7 @@ class TodayChallengeCard extends StatelessWidget {
                   end: Alignment.centerRight,
                 )
               ),
-              child: Image.asset(
+              child: Image.network(
                 recipe.imagePath,
                 height: 225,
                 width: 290,

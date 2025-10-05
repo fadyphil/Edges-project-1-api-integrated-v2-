@@ -3,8 +3,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mini_project_1/blocs/historyy/history_cubit.dart';
 import 'package:mini_project_1/blocs/user/user_cubit.dart';
 import 'package:mini_project_1/data/models/enums.dart';
+import 'package:mini_project_1/data/models/recipe_challenge_model.dart';
 import 'package:mini_project_1/data/models/recipe_model.dart';
 import 'package:mini_project_1/routes/app_router.dart';
 
@@ -75,6 +77,16 @@ class _RecipeDoneScreenState extends State<RecipeDoneScreen> {
     final seconds = twoDigits(duration.inSeconds.remainder(60));
     return "$minutes:$seconds";
   }
+
+  void _saveChallengeToHistory() {
+  final challenge = RecipeChallenge(
+    recipe: widget.recipe,
+    timeTaken: _actualTime,
+    expectedTime: _userExpectedTime,
+    dateCompleted: DateTime.now(), // Use the current date and time
+  );
+  context.read<HistoryCubit>().addChallengeToHistory(challenge);
+}
 
   @override
   Widget build(BuildContext context) {
@@ -242,6 +254,7 @@ class _RecipeDoneScreenState extends State<RecipeDoneScreen> {
           ),
           onPressed: () {
             // This navigation flow clears the cooking screens and lands the user on their History page.
+            _saveChallengeToHistory();
             context.router.popUntilRoot();
             context.router.navigate(const HistoryRoute());
           },
@@ -275,4 +288,5 @@ class _RecipeDoneScreenState extends State<RecipeDoneScreen> {
       ],
     );
   }
+ 
 }

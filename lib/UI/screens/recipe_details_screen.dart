@@ -264,7 +264,7 @@ class CustomSliverAppBar extends StatelessWidget {
                   end: Alignment.topCenter,
                   )
               ),
-              child: Image.asset(recipe.imagePath, fit: BoxFit.cover),
+              child: Image.network(recipe.imagePath, fit: BoxFit.cover),
                
               ),
         ),

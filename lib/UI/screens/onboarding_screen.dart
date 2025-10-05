@@ -5,6 +5,7 @@ import 'package:mini_project_1/UI/sub_screens/onboarding_page1.dart';
 import 'package:mini_project_1/UI/sub_screens/onboarding_page3.dart';
 import 'package:mini_project_1/UI/sub_screens/onboording_page2.dart';
 import 'package:mini_project_1/blocs/user/user_cubit.dart';
+import 'package:mini_project_1/cache/cache_service.dart';
 import 'package:mini_project_1/data/models/enums.dart';
 import 'package:mini_project_1/routes/app_router.dart'; 
 
@@ -64,7 +65,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
       // Now this will work because the cubit is provided in main.dart
       context.read<UserCubit>().changename(name);
+      CacheService().setUserName(name);
       context.read<UserCubit>().changelevel(level!);
+      CacheService().setUserLevel(level);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -74,6 +77,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         backgroundColor:  Colors.green,
         )
       );
+
+      CacheService().setOnboardingComplete(true);
 
       context.router.replace(const MainRoute());
       

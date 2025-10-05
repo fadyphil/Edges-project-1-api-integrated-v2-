@@ -55,12 +55,14 @@ extension ExploreStatePatterns on ExploreState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( _Loaded value)?  loaded,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( _Loading value)?  loading,TResult Function( _Loaded value)?  loaded,TResult Function( _Error value)?  error,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
-return initial(_that);case _Loaded() when loaded != null:
-return loaded(_that);case _:
+return initial(_that);case _Loading() when loading != null:
+return loading(_that);case _Loaded() when loaded != null:
+return loaded(_that);case _Error() when error != null:
+return error(_that);case _:
   return orElse();
 
 }
@@ -78,12 +80,14 @@ return loaded(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( _Loaded value)  loaded,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( _Loading value)  loading,required TResult Function( _Loaded value)  loaded,required TResult Function( _Error value)  error,}){
 final _that = this;
 switch (_that) {
 case _Initial():
-return initial(_that);case _Loaded():
-return loaded(_that);case _:
+return initial(_that);case _Loading():
+return loading(_that);case _Loaded():
+return loaded(_that);case _Error():
+return error(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -100,12 +104,14 @@ return loaded(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( _Loaded value)?  loaded,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( _Loading value)?  loading,TResult? Function( _Loaded value)?  loaded,TResult? Function( _Error value)?  error,}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
-return initial(_that);case _Loaded() when loaded != null:
-return loaded(_that);case _:
+return initial(_that);case _Loading() when loading != null:
+return loading(_that);case _Loaded() when loaded != null:
+return loaded(_that);case _Error() when error != null:
+return error(_that);case _:
   return null;
 
 }
@@ -122,11 +128,13 @@ return loaded(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function( List<Recipe> allRecipes,  String searchQuery,  ExploreViewType viewType,  Set<String> selectedTags,  Set<String> allTags)?  loaded,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<Recipe> allRecipes,  String searchQuery,  ExploreViewType viewType,  Set<String> selectedTags,  Set<String> allTags)?  loaded,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
-return initial();case _Loaded() when loaded != null:
-return loaded(_that.allRecipes,_that.searchQuery,_that.viewType,_that.selectedTags,_that.allTags);case _:
+return initial();case _Loading() when loading != null:
+return loading();case _Loaded() when loaded != null:
+return loaded(_that.allRecipes,_that.searchQuery,_that.viewType,_that.selectedTags,_that.allTags);case _Error() when error != null:
+return error(_that.message);case _:
   return orElse();
 
 }
@@ -144,11 +152,13 @@ return loaded(_that.allRecipes,_that.searchQuery,_that.viewType,_that.selectedTa
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function( List<Recipe> allRecipes,  String searchQuery,  ExploreViewType viewType,  Set<String> selectedTags,  Set<String> allTags)  loaded,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<Recipe> allRecipes,  String searchQuery,  ExploreViewType viewType,  Set<String> selectedTags,  Set<String> allTags)  loaded,required TResult Function( String message)  error,}) {final _that = this;
 switch (_that) {
 case _Initial():
-return initial();case _Loaded():
-return loaded(_that.allRecipes,_that.searchQuery,_that.viewType,_that.selectedTags,_that.allTags);case _:
+return initial();case _Loading():
+return loading();case _Loaded():
+return loaded(_that.allRecipes,_that.searchQuery,_that.viewType,_that.selectedTags,_that.allTags);case _Error():
+return error(_that.message);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -165,11 +175,13 @@ return loaded(_that.allRecipes,_that.searchQuery,_that.viewType,_that.selectedTa
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function( List<Recipe> allRecipes,  String searchQuery,  ExploreViewType viewType,  Set<String> selectedTags,  Set<String> allTags)?  loaded,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<Recipe> allRecipes,  String searchQuery,  ExploreViewType viewType,  Set<String> selectedTags,  Set<String> allTags)?  loaded,TResult? Function( String message)?  error,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
-return initial();case _Loaded() when loaded != null:
-return loaded(_that.allRecipes,_that.searchQuery,_that.viewType,_that.selectedTags,_that.allTags);case _:
+return initial();case _Loading() when loading != null:
+return loading();case _Loaded() when loaded != null:
+return loaded(_that.allRecipes,_that.searchQuery,_that.viewType,_that.selectedTags,_that.allTags);case _Error() when error != null:
+return error(_that.message);case _:
   return null;
 
 }
@@ -201,6 +213,38 @@ int get hashCode => runtimeType.hashCode;
 @override
 String toString() {
   return 'ExploreState.initial()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _Loading extends ExploreState {
+  const _Loading(): super._();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loading);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'ExploreState.loading()';
 }
 
 
@@ -299,6 +343,72 @@ as String,viewType: null == viewType ? _self.viewType : viewType // ignore: cast
 as ExploreViewType,selectedTags: null == selectedTags ? _self._selectedTags : selectedTags // ignore: cast_nullable_to_non_nullable
 as Set<String>,allTags: null == allTags ? _self._allTags : allTags // ignore: cast_nullable_to_non_nullable
 as Set<String>,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class _Error extends ExploreState {
+  const _Error(this.message): super._();
+  
+
+ final  String message;
+
+/// Create a copy of ExploreState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ErrorCopyWith<_Error> get copyWith => __$ErrorCopyWithImpl<_Error>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Error&&(identical(other.message, message) || other.message == message));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,message);
+
+@override
+String toString() {
+  return 'ExploreState.error(message: $message)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ErrorCopyWith<$Res> implements $ExploreStateCopyWith<$Res> {
+  factory _$ErrorCopyWith(_Error value, $Res Function(_Error) _then) = __$ErrorCopyWithImpl;
+@useResult
+$Res call({
+ String message
+});
+
+
+
+
+}
+/// @nodoc
+class __$ErrorCopyWithImpl<$Res>
+    implements _$ErrorCopyWith<$Res> {
+  __$ErrorCopyWithImpl(this._self, this._then);
+
+  final _Error _self;
+  final $Res Function(_Error) _then;
+
+/// Create a copy of ExploreState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+  return _then(_Error(
+null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 
