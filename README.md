@@ -28,14 +28,6 @@ This repository represents the **second iteration** of my recipe application. Wh
 
 ---
 
-## 📸 API Integration Demo
-
-<p align="center">
-  <img src="https://via.placeholder.com/220x400?text=API+Loading+State" width="220" />
-  <img src="https://via.placeholder.com/220x400?text=Live+Data+Feed" width="220" />
-</p>
-
----
 
 ## 💻 Code Highlight: The Repository Pattern
 
